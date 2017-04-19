@@ -1,46 +1,49 @@
+#Givens
 total_cost = 1000000 #total cost is $1M
-down = .25 * total_cost
-r = .04
-semi_annual_raise = .07
+down = .25 * total_cost #down payment
+r = .04 #return rate on investment
+semi_annual_raise = .07 #raise rate
 annual_salary = input('Annual Salary: ')
-high = 10000
-low = 0
-count = 0
-savings = 0
-found = False
-months = 1
-
 monthly_salary = annual_salary/12.0
-for m in range (0,35):
+high = 10000 #starting high guess for bi-sectional search. set to 10K to start as integer?
+low = 0 #opposite of low
+count = 0 #counter for number of guesses
+savings = 0 #starting savings amount
+months = 36 #number of months to save
+guess_buffer = 100 #so it doesn't go into infinite loop b/c of floats?
+
+
+#for loop to calculate max savings possible
+for m in range (1,months):
 	savings += monthly_salary + savings*r/12
-	if months % 6 == 0:
+	if m % 6 == 0:
 		monthly_salary += (monthly_salary*semi_annual_raise)
-	months +=1
-if savings < down-100:
+
+#print statement if we can't make enough
+if savings < down-guess_buffer:
 	print "Make more or save more"
+
+#bi-sectional guess if we do make enough
 else:
-	while abs(down - savings) >= 100:
-		savings = 0
-		months = 1
+	while abs(down - savings) >= guess_buffer:
+		savings = 0 #reset savings every time we while loop
+		savings_rate = int(high + low)/2.0 #why do we have to set this to int?
 		monthly_salary = annual_salary/12.0
-		savings_rate = int(high + low)/2.0
-		for m in range(0,35):
+		for m in range(1,months):
 			savings += savings_rate/10000*monthly_salary + savings*r/12
-			if months % 6 == 0:
+			if m % 6 == 0:
 				monthly_salary += (monthly_salary*semi_annual_raise)
-			months +=1
-		if abs(down-savings) <= 100:
-			print savings_rate
-			print savings
-			found = True
+		if abs(down-savings) <= guess_buffer: #final answer; success print!
+			print "Savings", savings
+			print "Savings rate", savings_rate/10000
+			count +=1
+			print "Steps in bisection search:", count
 			break
-		elif down-savings > 100:
+		elif down-savings > guess_buffer: #if savings not enough
 			low = savings_rate
-			print low
-		elif down-savings < -100:
+			print low, "not enough"
+		elif down-savings < -guess_buffer: #if savings too high
 			high = savings_rate
-			print high
+			print high, "too much"
 		count +=1
-	print "Savings", savings
-	print "Savings rate", savings_rate/10000
-	print "Steps in bisection search:", count
+	
