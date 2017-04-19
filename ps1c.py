@@ -28,7 +28,8 @@ else:
 	while abs(down - savings) >= guess_buffer:
 		savings = 0 #reset savings every time we while loop
 		savings_rate = int(high + low)/2.0 #why do we have to set this to int?
-		monthly_salary = annual_salary/12.0
+		monthly_salary = annual_salary/12.0 #have to reset monthly_salary b/c for loop
+		count += 1 #guess counter
 		for m in range(1,months):
 			savings += savings_rate/10000*monthly_salary + savings*r/12
 			if m % 6 == 0:
@@ -36,7 +37,6 @@ else:
 		if abs(down-savings) <= guess_buffer: #final answer; success print!
 			print "Savings", savings
 			print "Savings rate", savings_rate/10000
-			count +=1
 			print "Steps in bisection search:", count
 			break
 		elif down-savings > guess_buffer: #if savings not enough
@@ -45,5 +45,4 @@ else:
 		elif down-savings < -guess_buffer: #if savings too high
 			high = savings_rate
 			print high, "too much"
-		count +=1
 	
